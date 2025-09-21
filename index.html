@@ -88,6 +88,32 @@
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
+    /* Playlist list */
+    #playlist {
+      margin-top: 20px;
+      text-align: center;
+    }
+    #playlist li {
+      list-style: none;
+      margin: 8px 0;
+      padding: 10px;
+      background: #fff;
+      border-radius: 8px;
+      display: inline-block;
+      cursor: pointer;
+      font-size: 20px;
+      transition: 0.3s;
+    }
+    #playlist li:hover {
+      background: #ffb6c1;
+      color: white;
+      transform: scale(1.05);
+    }
+    #playlist li.active {
+      background: #d63384;
+      color: white;
+    }
+
     /* Password Section */
     #passwordSection {
       margin-top: 100px;
@@ -113,7 +139,7 @@
     }
 
     /* Floating Hearts & Butterflies */
-    .heart, .butterfly {
+    .heart {
       position: fixed;
       bottom: -50px;
       font-size: 28px;
@@ -175,6 +201,7 @@
       <h2>🎶 Our Songs 🎶</h2>
       <audio id="audioPlayer" controls></audio>
       <p id="nowPlaying"></p>
+      <ul id="playlist"></ul>
     </section>
 
     <!-- Notes -->
@@ -203,17 +230,30 @@
     const audioPlayer = document.getElementById("audioPlayer");
     const nowPlaying = document.getElementById("nowPlaying");
     const bgSong = document.getElementById("bgSong");
+    const playlistEl = document.getElementById("playlist");
 
     // Load & play song
     function loadSong(index) {
+      currentSong = index;
       audioPlayer.src = songs[index].src;
       nowPlaying.textContent = "Now Playing: " + songs[index].title;
       audioPlayer.play();
+
+      document.querySelectorAll("#playlist li").forEach(li => li.classList.remove("active"));
+      playlistEl.children[index].classList.add("active");
     }
 
     audioPlayer.addEventListener("ended", () => {
       currentSong = (currentSong + 1) % songs.length;
       loadSong(currentSong);
+    });
+
+    // Build playlist UI
+    songs.forEach((song, index) => {
+      const li = document.createElement("li");
+      li.textContent = song.title;
+      li.onclick = () => loadSong(index);
+      playlistEl.appendChild(li);
     });
 
     // Password check
