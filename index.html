@@ -154,7 +154,7 @@
 
     <!-- Love Letter -->
     <section id="letter">
-      <h2>💌 My feyfey 💌</h2>
+      <h2>💌 My Dearest 💌</h2>
       <p>
         Hi lovey, I know lately it’s been hard for both of us pero u still choose me always :<br>
         Thank you for never giving up on us kahit na may mga times na parang ang bigat at ang hirap.<br>
@@ -167,7 +167,7 @@
         I promise to love you through the hard days, celebrate with you on the good days,<br>
         and hold on to you every single day in between.
       </p>
-      <p>Mahal na mahal kita.💕</p>
+      <p>Mahal na mahal kita, always and forever. 💕</p>
     </section>
 
     <!-- Music Playlist -->
@@ -175,6 +175,10 @@
       <h2>🎶 Our Songs 🎶</h2>
       <audio id="audioPlayer" controls></audio>
       <p id="nowPlaying"></p>
+      <div>
+        <button onclick="prevSong()">⏮️ Prev</button>
+        <button onclick="nextSong()">⏭️ Next</button>
+      </div>
     </section>
 
     <!-- Notes -->
@@ -210,10 +214,17 @@
       audioPlayer.play();
     }
 
-    audioPlayer.addEventListener("ended", () => {
+    function nextSong() {
       currentSong = (currentSong + 1) % songs.length;
       loadSong(currentSong);
-    });
+    }
+
+    function prevSong() {
+      currentSong = (currentSong - 1 + songs.length) % songs.length;
+      loadSong(currentSong);
+    }
+
+    audioPlayer.addEventListener("ended", nextSong);
 
     // Password check
     function checkPassword() {
@@ -221,6 +232,7 @@
       if (input === "luvleyfey") {
         document.getElementById("passwordSection").style.display = "none";
         document.getElementById("mainContent").style.display = "block";
+        loadSong(currentSong);
       } else {
         alert("❌ Wrong password, try again!");
       }
