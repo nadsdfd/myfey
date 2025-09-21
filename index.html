@@ -112,8 +112,25 @@
       font-size: 20px;
     }
 
+    /* Playlist Buttons */
+    .playlist button {
+      background: #ffb6c1;
+      border: none;
+      padding: 8px 15px;
+      margin: 5px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: 'Dancing Script', cursive;
+      font-size: 18px;
+      transition: 0.3s;
+    }
+    .playlist button:hover {
+      background: #ff69b4;
+      color: white;
+    }
+
     /* Floating Hearts & Butterflies */
-    .heart, .butterfly {
+    .heart {
       position: fixed;
       bottom: -50px;
       font-size: 28px;
@@ -175,8 +192,11 @@
       <h2>🎶 Our Songs 🎶</h2>
       <audio id="audioPlayer" controls></audio>
       <p id="nowPlaying"></p>
-      <div>
-        <button onclick="prevSong()">⏮️ Prev</button>
+      <div class="playlist">
+        <button onclick="prevSong()">⏮️ Previous</button>
+        <button onclick="playSong(0)">💖 Pag-ibig Ikaw at Ako</button>
+        <button onclick="playSong(1)">🎶 Museo</button>
+        <button onclick="playSong(2)">✨ Aura</button>
         <button onclick="nextSong()">⏭️ Next</button>
       </div>
     </section>
@@ -192,9 +212,6 @@
     </section>
   </div>
 
-  <!-- Hidden Background Music for Love Letter -->
-  <audio id="bgSong" src="songs/pag-ibig-ikaw-at-ako.mp3"></audio>
-
   <script>
     // Songs list
     const songs = [
@@ -206,25 +223,34 @@
     let currentSong = 0;
     const audioPlayer = document.getElementById("audioPlayer");
     const nowPlaying = document.getElementById("nowPlaying");
-    const bgSong = document.getElementById("bgSong");
 
+    // Load and play a song
     function loadSong(index) {
+      currentSong = index;
       audioPlayer.src = songs[index].src;
       nowPlaying.textContent = "Now Playing: " + songs[index].title;
-      audioPlayer.play();
+      audioPlayer.play().catch(e => console.log("Autoplay blocked, click to play"));
     }
 
+    // Play specific song
+    function playSong(index) {
+      loadSong(index);
+    }
+
+    // Next and Previous
     function nextSong() {
       currentSong = (currentSong + 1) % songs.length;
       loadSong(currentSong);
     }
-
     function prevSong() {
       currentSong = (currentSong - 1 + songs.length) % songs.length;
       loadSong(currentSong);
     }
 
-    audioPlayer.addEventListener("ended", nextSong);
+    // When song ends, go next
+    audioPlayer.addEventListener("ended", () => {
+      nextSong();
+    });
 
     // Password check
     function checkPassword() {
@@ -232,22 +258,21 @@
       if (input === "luvleyfey") {
         document.getElementById("passwordSection").style.display = "none";
         document.getElementById("mainContent").style.display = "block";
-        loadSong(currentSong);
+        // Autoplay Pag-ibig on unlock
+        loadSong(0);
       } else {
         alert("❌ Wrong password, try again!");
       }
     }
 
     // Section control
-    function showSection(id, playBg = false) {
+    function showSection(id, playFirst = false) {
       document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
       document.getElementById(id).classList.add("active");
 
-      if (playBg) {
-        bgSong.play();
-      } else {
-        bgSong.pause();
-        bgSong.currentTime = 0;
+      if (playFirst && id === "letter") {
+        // Replay Pag-ibig when Love Letter is opened
+        loadSong(0);
       }
     }
 
